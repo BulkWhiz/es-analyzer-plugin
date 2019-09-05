@@ -24,6 +24,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class EsAnalysisTests {
 
     @Test
     public void testTokenFilter() throws IOException {
-        StringReader sr = new StringReader("nivea sun kids protection lotion conditioner");
+        StringReader sr = new StringReader("nivea sun kids protection");
         Analyzer analyzer = new StandardAnalyzer();
         WordJoinTokenFilter filter = new WordJoinTokenFilter(analyzer.tokenStream("f", sr));
         List<String> list = new ArrayList<String>();
@@ -46,9 +47,9 @@ public class EsAnalysisTests {
         while (filter.incrementToken()) {
             CharTermAttribute ta = filter.getAttribute(CharTermAttribute.class);
             list.add(ta.toString());
-            System.out.println(ta.toString());
+//            System.out.println(ta.toString());
         }
-        Assert.assertEquals(81, list.size());
+        Assert.assertEquals(32, list.size());
         Assert.assertTrue(list.contains("nivea"));
         Assert.assertTrue(list.contains("sun"));
         Assert.assertTrue(list.contains("niveasun"));

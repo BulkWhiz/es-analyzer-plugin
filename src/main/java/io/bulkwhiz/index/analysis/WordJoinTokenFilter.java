@@ -7,19 +7,20 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionLengthAttribute;
-
+import org.apache.commons.lang3.ArrayUtils;
 import java.io.IOException;
+import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 public class WordJoinTokenFilter extends TokenFilter {
 
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
-    private final KeywordAttribute keywordAttr = addAttribute(KeywordAttribute.class);
-    private final PositionLengthAttribute posLenAtt = addAttribute(PositionLengthAttribute.class);
     private final PositionIncrementAttribute posIncrAtt = addAttribute(PositionIncrementAttribute.class);
     Stemmer stemmer = new Stemmer();
-    LinkedList<char[]> list = new LinkedList<char[]>();
+    LinkedList<AbstractMap.SimpleEntry<char[], char[]>> list = new LinkedList<>();
+    LinkedList<char[]> output = new LinkedList<char[]>();
 
     
     public WordJoinTokenFilter(TokenStream in) {
@@ -28,20 +29,27 @@ public class WordJoinTokenFilter extends TokenFilter {
     
     @Override
     public final boolean incrementToken() throws IOException {
-        while (!list.isEmpty()) {
-            char[] buffer = list.poll();
+        while (!output.isEmpty()) {
+            char[] buffer = output.poll();
             termAtt.setEmpty();
             termAtt.copyBuffer(buffer, 0, buffer.length);
             posIncrAtt.setPositionIncrement(0);
             return true;
         }
-
         if (!input.incrementToken()) {
             return false;
         } else {
-            char[] buffer = termAtt.buffer();
+            char[] buffer = termAtt.toString().toCharArray();
             char[] stemmed = stemmer.stem(termAtt.toString()).toCharArray();
-            if(buffer != stemmed) list.add(stemmed);
+            output.add(stemmed);
+            for (int counter = 0; counter < list.size(); counter++) {
+                AbstractMap.SimpleEntry<char[], char[]> pair = list.get(counter);
+                output.add(ArrayUtils.addAll(pair.getKey(), buffer));
+                output.add(ArrayUtils.addAll(pair.getKey(), stemmed));
+                output.add(ArrayUtils.addAll(pair.getValue(), buffer));
+                output.add(ArrayUtils.addAll(pair.getValue(), stemmed));
+            }
+            list.add(new AbstractMap.SimpleEntry<>(buffer, stemmed));
             return true;
         }
 

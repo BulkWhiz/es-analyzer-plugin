@@ -1,16 +1,6 @@
 package io.bulkwhiz.index.utils;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Iterator;
-import java.util.function.Function;
-import edu.stanford.nlp.ling.Word;
-
-
-
-
-public class Stemmer implements Function<Word,Word> {
+public class Stemmer {
     private char[] b;
     private int i,     /* offset into b */
             i_end, /* offset to end of stemmed word */
@@ -524,6 +514,14 @@ public class Stemmer implements Function<Word,Word> {
         }
     }
 
+    private final void step7() {
+        if ((b[k-1] == '\'' ||
+                b[k-1] == '\u2019' ||
+                b[k-1] == '\uFF07') &&
+                (b[k] == 's' || b[k] == 'S')) k-=2;
+
+    }
+
     /**
      * Stem the word placed into the Stemmer buffer through calls to add().
      * Returns true if the stemming process resulted in a word different
@@ -533,6 +531,7 @@ public class Stemmer implements Function<Word,Word> {
     private void stem() {
         k = i - 1;
         if (k > 1) {
+            step7();
             step1();
             step2();
             step3();
@@ -555,24 +554,6 @@ public class Stemmer implements Function<Word,Word> {
         }
         stem();
         return toString();
-    }
-
-    /**
-     * Stems <code>w</code> and returns stemmed <code>Word</code>.
-     */
-
-    public Word stem(Word w) {
-        return (new Word(stem(w.word())));
-    }
-
-    /**
-     * Stems <code>word</code> (which must be a <code>Word</code>,
-     * or else
-     * a ClassCastException will be thrown, and returns stemmed
-     * <code>Word</code>.
-     */
-    public Word apply(Word word) {
-        return stem(word);
     }
 
 }
