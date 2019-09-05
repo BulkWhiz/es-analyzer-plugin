@@ -49,7 +49,7 @@ public class EsAnalysisTests {
             list.add(ta.toString());
 //            System.out.println(ta.toString());
         }
-        Assert.assertEquals(32, list.size());
+        Assert.assertEquals(23, list.size());
         Assert.assertTrue(list.contains("nivea"));
         Assert.assertTrue(list.contains("sun"));
         Assert.assertTrue(list.contains("niveasun"));
@@ -69,5 +69,23 @@ public class EsAnalysisTests {
         Assert.assertTrue(list.contains("kidsprotection"));
         Assert.assertTrue(list.contains("kidprotect"));
         Assert.assertTrue(list.contains("kidprotection"));
+
+
+        StringReader sr1 = new StringReader("zip and lock");
+        WordJoinTokenFilter filter1 = new WordJoinTokenFilter(analyzer.tokenStream("f", sr1));
+        List<String> list1 = new ArrayList<String>();
+        filter1.reset();
+        while (filter1.incrementToken()) {
+            CharTermAttribute ta = filter1.getAttribute(CharTermAttribute.class);
+            list1.add(ta.toString());
+//            System.out.println(ta.toString());
+        }
+        Assert.assertEquals(6, list1.size());
+        Assert.assertTrue(list1.contains("zip"));
+        Assert.assertTrue(list1.contains("and"));
+        Assert.assertTrue(list1.contains("lock"));
+        Assert.assertTrue(list1.contains("zipand"));
+        Assert.assertTrue(list1.contains("ziplock"));
+        Assert.assertTrue(list1.contains("andlock"));
     }
 }

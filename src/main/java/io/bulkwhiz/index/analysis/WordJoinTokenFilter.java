@@ -37,17 +37,19 @@ public class WordJoinTokenFilter extends TokenFilter {
             return true;
         }
         if (!input.incrementToken()) {
+            list.clear();
+            output.clear();
             return false;
         } else {
             char[] buffer = termAtt.toString().toCharArray();
             char[] stemmed = stemmer.stem(termAtt.toString()).toCharArray();
-            output.add(stemmed);
+            if(!Arrays.equals(buffer, stemmed)) output.add(stemmed);
             for (int counter = 0; counter < list.size(); counter++) {
                 AbstractMap.SimpleEntry<char[], char[]> pair = list.get(counter);
                 output.add(ArrayUtils.addAll(pair.getKey(), buffer));
-                output.add(ArrayUtils.addAll(pair.getKey(), stemmed));
-                output.add(ArrayUtils.addAll(pair.getValue(), buffer));
-                output.add(ArrayUtils.addAll(pair.getValue(), stemmed));
+                if(!Arrays.equals(buffer, stemmed)) output.add(ArrayUtils.addAll(pair.getKey(), stemmed));
+                if(!Arrays.equals(pair.getKey(), pair.getValue())) output.add(ArrayUtils.addAll(pair.getValue(), buffer));
+                if(!Arrays.equals(buffer, stemmed)) output.add(ArrayUtils.addAll(pair.getValue(), stemmed));
             }
             list.add(new AbstractMap.SimpleEntry<>(buffer, stemmed));
             return true;
