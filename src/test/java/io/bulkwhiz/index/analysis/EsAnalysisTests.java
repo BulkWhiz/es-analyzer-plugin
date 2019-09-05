@@ -49,7 +49,7 @@ public class EsAnalysisTests {
             list.add(ta.toString());
 //            System.out.println(ta.toString());
         }
-        Assert.assertEquals(23, list.size());
+        Assert.assertEquals(19, list.size());
         Assert.assertTrue(list.contains("nivea"));
         Assert.assertTrue(list.contains("sun"));
         Assert.assertTrue(list.contains("niveasun"));
@@ -70,9 +70,10 @@ public class EsAnalysisTests {
         Assert.assertTrue(list.contains("kidprotect"));
         Assert.assertTrue(list.contains("kidprotection"));
 
-
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////
         StringReader sr1 = new StringReader("zip and lock");
-        WordJoinTokenFilter filter1 = new WordJoinTokenFilter(analyzer.tokenStream("f", sr1));
+        Analyzer analyzer1 = new StandardAnalyzer();
+        WordJoinTokenFilter filter1 = new WordJoinTokenFilter(analyzer1.tokenStream("f", sr1));
         List<String> list1 = new ArrayList<String>();
         filter1.reset();
         while (filter1.incrementToken()) {
@@ -87,5 +88,42 @@ public class EsAnalysisTests {
         Assert.assertTrue(list1.contains("zipand"));
         Assert.assertTrue(list1.contains("ziplock"));
         Assert.assertTrue(list1.contains("andlock"));
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+        StringReader sr2 = new StringReader("women deodorant");
+        Analyzer analyzer2 = new StandardAnalyzer();
+        WordJoinTokenFilter filter2 = new WordJoinTokenFilter(analyzer2.tokenStream("f", sr2));
+        List<String> list2 = new ArrayList<String>();
+        filter2.reset();
+        while (filter2.incrementToken()) {
+            CharTermAttribute ta = filter2.getAttribute(CharTermAttribute.class);
+            list2.add(ta.toString());
+//            System.out.println(ta.toString());
+        }
+        Assert.assertEquals(8, list2.size());
+        Assert.assertTrue(list2.contains("woman"));
+        Assert.assertTrue(list2.contains("women"));
+        Assert.assertTrue(list2.contains("deodorant"));
+        Assert.assertTrue(list2.contains("deodor"));
+        Assert.assertTrue(list2.contains("womandeodorant"));
+        Assert.assertTrue(list2.contains("womendeodorant"));
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+        StringReader sr3 = new StringReader("air fresheners");
+        Analyzer analyzer3 = new StandardAnalyzer();
+        WordJoinTokenFilter filter3 = new WordJoinTokenFilter(analyzer3.tokenStream("f", sr3));
+        List<String> list3 = new ArrayList<String>();
+        filter3.reset();
+        while (filter3.incrementToken()) {
+            CharTermAttribute ta = filter3.getAttribute(CharTermAttribute.class);
+            list3.add(ta.toString());
+//            System.out.println(ta.toString());
+        }
+        Assert.assertEquals(5, list3.size());
+        Assert.assertTrue(list3.contains("air"));
+        Assert.assertTrue(list3.contains("fresheners"));
+        Assert.assertTrue(list3.contains("fresh"));
+        Assert.assertTrue(list3.contains("airfresh"));
+        Assert.assertTrue(list3.contains("airfresheners"));
     }
 }

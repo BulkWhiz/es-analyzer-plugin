@@ -1,5 +1,6 @@
 package io.bulkwhiz.index.analysis;
 
+import io.bulkwhiz.index.utils.CustomStemmer;
 import io.bulkwhiz.index.utils.Stemmer;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
@@ -19,6 +20,7 @@ public class WordJoinTokenFilter extends TokenFilter {
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
     private final PositionIncrementAttribute posIncrAtt = addAttribute(PositionIncrementAttribute.class);
     Stemmer stemmer = new Stemmer();
+    CustomStemmer customStemmer = new CustomStemmer();
     LinkedList<AbstractMap.SimpleEntry<char[], char[]>> list = new LinkedList<>();
     LinkedList<char[]> output = new LinkedList<char[]>();
 
@@ -42,16 +44,18 @@ public class WordJoinTokenFilter extends TokenFilter {
             return false;
         } else {
             char[] buffer = termAtt.toString().toCharArray();
-            char[] stemmed = stemmer.stem(termAtt.toString()).toCharArray();
-            if(!Arrays.equals(buffer, stemmed)) output.add(stemmed);
+            String stemmed = stemmer.stem(termAtt.toString());
+            char[] customStemmed = customStemmer.stem(stemmed);
+            if(!Arrays.equals(buffer, customStemmed)) output.add(customStemmed);
             for (int counter = 0; counter < list.size(); counter++) {
                 AbstractMap.SimpleEntry<char[], char[]> pair = list.get(counter);
                 output.add(ArrayUtils.addAll(pair.getKey(), buffer));
-                if(!Arrays.equals(buffer, stemmed)) output.add(ArrayUtils.addAll(pair.getKey(), stemmed));
+                if(!Arrays.equals(buffer, customStemmed)) output.add(ArrayUtils.addAll(pair.getKey(), customStemmed));
                 if(!Arrays.equals(pair.getKey(), pair.getValue())) output.add(ArrayUtils.addAll(pair.getValue(), buffer));
-                if(!Arrays.equals(buffer, stemmed)) output.add(ArrayUtils.addAll(pair.getValue(), stemmed));
+                if(!Arrays.equals(pair.getKey(), pair.getValue()) && !Arrays.equals(buffer, customStemmed))
+                    output.add(ArrayUtils.addAll(pair.getValue(), customStemmed));
             }
-            list.add(new AbstractMap.SimpleEntry<>(buffer, stemmed));
+            list.add(new AbstractMap.SimpleEntry<>(buffer, customStemmed));
             return true;
         }
 

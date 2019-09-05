@@ -26,7 +26,7 @@ public class EsAnalysisPlugin extends Plugin implements AnalysisPlugin {
     @Override
     public Map<String, AnalysisModule.AnalysisProvider<org.elasticsearch.index.analysis.TokenFilterFactory>> getTokenFilters() {
         Map<String, AnalysisModule.AnalysisProvider<org.elasticsearch.index.analysis.TokenFilterFactory>> extra = new HashMap<>();
-        extra.put("wordjoin", WordJoinTokenFilterFactory::new);
+        extra.put("wordjoin_stemmer", WordJoinTokenFilterFactory::new);
         return extra;
     }
 

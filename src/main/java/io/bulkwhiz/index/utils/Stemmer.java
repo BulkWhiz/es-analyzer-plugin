@@ -514,6 +514,8 @@ public class Stemmer {
         }
     }
 
+    /*step7() possessive stemmer. removes 's */
+
     private final void step7() {
         if ((b[k-1] == '\'' ||
                 b[k-1] == '\u2019' ||
