@@ -5,14 +5,11 @@ import io.bulkwhiz.index.utils.Stemmer;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-import org.apache.lucene.analysis.tokenattributes.PositionLengthAttribute;
 import org.apache.commons.lang3.ArrayUtils;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 public class WordJoinTokenFilter extends TokenFilter {
@@ -24,7 +21,6 @@ public class WordJoinTokenFilter extends TokenFilter {
     LinkedList<AbstractMap.SimpleEntry<char[], char[]>> list = new LinkedList<>();
     LinkedList<char[]> output = new LinkedList<char[]>();
 
-    
     public WordJoinTokenFilter(TokenStream in) {
         super(in);
     }

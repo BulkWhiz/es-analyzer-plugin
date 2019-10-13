@@ -1,5 +1,7 @@
 package io.bulkwhiz.index.utils;
 
+// https://github.com/stanfordnlp/CoreNLP/blob/master/src/edu/stanford/nlp/process/Stemmer.java
+
 public class Stemmer {
     private char[] b;
     private int i,     /* offset into b */
